@@ -12,14 +12,16 @@ file *tweet_coordinates.csv* that was produced with the Python program
 
 To download and run it open and R and type:
 
-    library(shiny)
-    
-    # Run it using runGitHub
-    runGitHub("shiny_HappyStates", "JensAdamczak")
-    
-    # Run a tar or zip file directly
-    runUrl("https://github.com/JensAdamczak/shiny_HappyStates/archive/master.tar.gz")
-    runUrl("https://github.com/JensAdamczak/shiny_HappyStates/archive/master.zip")
+```R
+library(shiny)
+
+# Run it using runGitHub
+runGitHub("shiny_HappyStates", "JensAdamczak")
+
+# Run a tar or zip file directly
+runUrl("https://github.com/JensAdamczak/shiny_HappyStates/archive/master.tar.gz")
+runUrl("https://github.com/JensAdamczak/shiny_HappyStates/archive/master.zip")
+```
 
 The application should open in the default browser of the system. It was tested
 on Firefox 24.0.  
