@@ -12,7 +12,7 @@ file *tweet_coordinates.csv* that was produced with the Python program
 
 To download and run it open and R and type:
 
-```R
+```
 library(shiny)
 
 # Run it using runGitHub
