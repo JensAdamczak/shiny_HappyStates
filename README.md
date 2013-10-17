@@ -9,7 +9,7 @@ The application consists of the files ui.R and server.R and requires an input
 file *tweet_coordinates.csv* that was produced with the Python program
 *happyStates.py*.
 
-To download and run it open and R and type:
+To download and run it open R and type:
 
 ```
 library(shiny)
