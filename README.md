@@ -1,5 +1,4 @@
-README for the R shiny HappyStates.app
---------------------------------------
+###README for the R shiny HappyStates.app
 
 This is an application for the R shiny package. It reads in a file with Twitter
 tweet data containing the text of the tweet, the location it was sent from, and a
