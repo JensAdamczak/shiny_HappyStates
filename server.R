@@ -54,7 +54,7 @@ negative = tweet.coord$score < 0
 min.val <- abs(min(tweet.coord$score))
 max.val <- max(tweet.coord$score)
 
-cex.val <- (4* (tweet.coord$score + min.val)) / (min.val+max.val)
+cex.val <- (3* (tweet.coord$score + min.val)) / (min.val+max.val)
 cex.val <- (cex.val +0.5)
 
 # Define shiny server setup 
@@ -110,6 +110,7 @@ shinyServer(function(input, output) {
 
   # Plot barplot for Tab2.
   output$stateBar <- renderPlot({
+    par(mar=c(7.5, 4.1, 4.1, 2.1)) # more space for x labels
     barplot(data()$values, las=2, col=data()$colors, 
             ylab=data()$main, main=data()$main)
   })
