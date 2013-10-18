@@ -7,7 +7,7 @@ barplots and colored maps to indicate the happiness of states in the US.
 
 The application consists of the files ui.R and server.R and requires an input
 file *tweet_coordinates.csv* that was produced with the Python program
-[*happyStates.py*](https://github.com/JensAdamczak/HappyStates/happyStates.py).
+[*happyStates.py*](https://github.com/JensAdamczak/HappyStates/blob/master/happyStates.py).
 
 To download and run it open R and type:
 
