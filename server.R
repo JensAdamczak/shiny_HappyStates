@@ -51,7 +51,11 @@ us.cities <- us.cities[us.cities$pop > 50000, ]
 positive = tweet.coord$score > 0
 negative = tweet.coord$score < 0
 
-min.value <- abs(min(tweet.coord$score))
+min.val <- abs(min(tweet.coord$score))
+max.val <- max(tweet.coord$score)
+
+cex.val <- (4* (tweet.coord$score + min.val)) / (min.val+max.val)
+cex.val <- (cex.val +0.5)
 
 # Define shiny server setup 
 shinyServer(function(input, output) {
@@ -75,16 +79,15 @@ shinyServer(function(input, output) {
     smiley <- "\U263A" # plot symbol 
     if (input$positive == TRUE) {
       points(tweet.coord$lon[positive], tweet.coord$lat[positive], 
-             pch=smiley, col=rgb(1, 0, 0, 0.8), lwd=0.5, 
-             cex=(tweet.coord$score[positive]+min.value)/10)
+             pch=smiley, col=rgb(1, 0, 0, input$transpos), lwd=0.5, 
+             cex=cex.val[positive])
     }
     # Plot negative tweets.
     if (input$negative == TRUE) {
       points(tweet.coord$lon[negative], tweet.coord$lat[negative], 
-             pch=1, col=rgb(0, 0, 0.9, 0.8), lwd=2, 
-             cex=(tweet.coord$score[negative]+min.value)/10)
+             pch=1, col=rgb(0, 0, 0.9, input$transneg), lwd=2, 
+             cex=cex.val[negative])
     }
-    points(-104.014722, 30.681444, pch=4, col="green", lwd=2)
   })
 
   data <- reactive({
