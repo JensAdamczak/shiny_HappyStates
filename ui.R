@@ -35,7 +35,13 @@ shinyUI(pageWithSidebar(
       radioButtons("quant", "Select quantity to plot:",
                    list("Number of tweets" = "ntweets",
                         "Average happiness" = "happ.avg",
-                        "Total happiness" = "happ.total"))
+                        "Total happiness" = "happ.total")),
+      br(),
+      helpText("Select the state quantity to compare to the tweet results. Note:
+               The state data is based on the R state data set (state.x77) and
+               certainly outdated."),
+      uiOutput("statedata"),
+      checkboxInput("fitmodel", "Fit linear model", FALSE)
     ),
 
     # Sidebar panel for Tab3.
@@ -50,9 +56,11 @@ shinyUI(pageWithSidebar(
     tabsetPanel(
       # Tab1: US map with location of tweets.
       tabPanel("US", plotOutput("tweetMap", width="auto", height="600px")),
-      # Tab2: Barplot with number of tweets/happiness + colored US map.
+      # Tab2: Barplot with number of tweets/happiness + colored US map + state
+      #   vs. tweet characteristics.
       tabPanel("States", plotOutput("stateBar", width="auto", height="350px"),
-                     plotOutput("stateMap", width="auto", height="400px")),
+                         plotOutput("stateMap", width="auto", height="400px"),
+                         verbatimTextOutput("summary")),
       # Tab3: Tables with most positive and negative tweets. 
       tabPanel("Tweets", h4("Most positive tweets"), tableOutput("tweets.pos"),
                          h4("Most negative tweets"), tableOutput("tweets.neg")), 
