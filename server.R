@@ -1,6 +1,7 @@
 library(shiny)
 library(maps)
 data(world.cities)
+data(state)
 
 # Get the tweet ratings from happyStates.py.
 tweet.coord <- read.csv("tweet_coordinates.csv", header=TRUE)
@@ -15,6 +16,15 @@ score.avg <- tapply(tweet.coord$score, tweet.coord$state, mean)
 
 # Get number of tweets for each state. 
 n.tweets <- tapply(tweet.coord$score, tweet.coord$state, length)
+
+# Prepare for model fits
+tweet.data <- data.frame(n.tweets=n.tweets, score=score, score.avg=score.avg)
+m <- match(rownames(tweet.data), rownames(state.x77))
+model.data <- cbind(state.x77[m, ], tweet.data)
+
+# Characteristics for states
+state.char <- as.list(colnames(model.data[, 1:8]))
+names(state.char) <- state.char
 
 # Create a color palette ranging from black:sad to red:happy.
 color.fun <- colorRamp(c("black","red"))
@@ -54,7 +64,7 @@ negative = tweet.coord$score < 0
 min.val <- abs(min(tweet.coord$score))
 max.val <- max(tweet.coord$score)
 
-cex.val <- (3* (tweet.coord$score + min.val)) / (min.val+max.val)
+cex.val <- (4* (tweet.coord$score + min.val)) / (min.val+max.val)
 cex.val <- (cex.val +0.5)
 
 # Define shiny server setup 
@@ -93,19 +103,28 @@ shinyServer(function(input, output) {
   data <- reactive({
     data <- switch(input$quant,
                    ntweets = list(values=n.tweets, 
+                                  modelx = model.data$n.tweets,
                                   colors=cols.n, 
                                   main="Number of tweets", 
                                   map.cols=map.col.n),
                    happ.total = list(values=score, 
+                                     modelx = model.data$score,
                                      colors=cols, 
                                      main="Total happiness",
                                      map.cols=map.col),
                    happ.avg = list(values=score.avg, 
+                                   modelx = model.data$score.avg,
                                    colors=cols.avg, 
                                    main="Average happiness", 
                                    map.cols=map.col.avg)
                   )
     return(data)
+  })
+
+  # Define list of state data to plot againts tweet data.
+  output$statedata <- renderUI({
+    selectInput("statedata", "Select state data:",
+    state.char[order(names(state.char))])
   })
 
   # Plot barplot for Tab2.
@@ -114,14 +133,32 @@ shinyServer(function(input, output) {
     barplot(data()$values, las=2, col=data()$colors, 
             ylab=data()$main, main=data()$main)
   })
-
   # Plot color US map for Tab2.
   output$stateMap <- renderPlot({
+    par(mfrow=c(1, 2))
     map("state", interior=FALSE)
     map("state", fill=TRUE, col=data()$map.cols, add=TRUE)
-  })
 
-  # Print most positive tweets for Tab3.
+    par(mar=c(5.1, 4.5, 4.1, 2.1)) # more space for y labels
+    modely <- input$statedata
+    # Plot state vs. tweet characteristic
+    plot(data()$modelx, model.data[, modely], col=data()$colors, lwd=2,
+         xlab=data()$main, ylab=modely)
+    if (input$fitmodel == TRUE) {
+      lm.state <- lm(model.data[, modely] ~ data()$modelx)
+      abline(lm.state, col="red", lwd=2)
+    }
+  })
+  # Print summary for Tab2.
+  output$summary <- renderPrint({
+    if (input$fitmodel == TRUE) {
+      modely <- input$statedata
+      y <- model.data[, modely]
+      x <- data()$modelx
+      summary(lm(y ~ x))
+    }
+  })
+  # Print most positive and most negative tweets for Tab3.
   output$tweets.pos <- renderTable({
     head(tweet.coord[order(tweet.coord$score, decreasing=TRUE), c(6, 7)], 
          n=input$ntop)
